@@ -1,0 +1,37 @@
+Problem :: Number of Distinct Islands
+Given a boolean 2D matrix grid of size n * m. 
+You have to find the number of distinct islands where a group of connected 1s (horizontally or vertically) forms an island. Two islands are considered to be distinct if and only if one island is not equal to another (not rotated or reflected).
+
+Time Complexity :: O(n*m)
+Space Complexity :: O(n*m)
+
+Code :: 
+class Solution {
+    void dfs(vector<vector<int>>& grid , int row , int col , vector<vector<bool>>&vis ,vector<pair<int,int>>&v, int i , int j){
+        if(row<0 or col<0 or row==grid.size() or col==grid[0].size() or vis[row][col]==1 or grid[row][col]==0)return ;
+        vis[row][col] = 1;
+        v.push_back({row - i , col - j});
+        dfs(grid ,row-1 , col , vis ,v, i , j);
+        dfs(grid ,row+1 , col , vis ,v, i , j);
+        dfs(grid, row , col-1 , vis ,v, i , j);
+        dfs(grid ,row , col+1 , vis ,v, i , j);
+    }
+  public:
+    int countDistinctIslands(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<bool>>vis(n , vector<bool>(m,0));
+        set<vector<pair<int,int>>>s;
+        for(int i=0 ; i<n ; i++){
+            for(int j=0 ; j<m ;j++){
+                if(!vis[i][j] && grid[i][j] == 1){
+                    // vis[i][j] = 1;
+                    vector<pair<int,int>>v;
+                    dfs(grid, i ,j ,vis , v,i,j );
+                    s.insert(v);
+                }
+            }
+        }
+        return s.size();
+    }
+};
