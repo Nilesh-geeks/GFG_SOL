@@ -1,0 +1,39 @@
+Problem :: Shortest Source to Destination Path
+Given a 2D binary matrix A(0-based index) of dimensions NxM. Find the minimum number of steps required to reach from (0,0) to (X, Y).
+Note: You can only move left, right, up and down, and only through cells that contain 1.
+
+Time Complexity ::  O(N*M*4)
+Space Complexity :: O( N*M )
+
+Code::
+#define p pair<int,pair<int,int>>
+class Solution {
+  public:
+    int shortestDistance(int N, int M, vector<vector<int>> A, int X, int Y) {
+        if(A[0][0]==0)return -1;
+        vector<vector<int>>dist(N , vector<int>(M,1e9));
+        queue<p>q;
+        q.push({0,{0,0}});
+        int dr[] = {-1,0,1,0};
+        int dc[ ]  ={0,1,0,-1};
+        dist[0][0] =0;
+        while(!q.empty()){
+            auto it  = q.front();
+            q.pop();
+            int dis = it.first;
+            int row = it.second.first;
+            int col = it.second.second;
+            if(row == X and col == Y)return dis;
+            for(int i=0 ; i<4 ; i++){
+                int newrow = row + dr[i];
+                int newcol = col + dc[i];
+                 if(newrow>=0 and newrow<N and newcol>=0 and newcol<M && A[newrow][newcol] && dist[newrow][newcol]>dis+1){
+                     dist[newrow][newcol]  = dis+1;
+                     q.push({dis + 1 ,{newrow , newcol}});
+                     if(X==newrow and Y==newcol)return dis+1;
+                 }
+            }
+        }
+        return -1;
+    }
+};
