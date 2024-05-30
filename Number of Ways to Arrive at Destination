@@ -1,0 +1,47 @@
+Problem :: Number of Ways to Arrive at Destination
+You are in a city that consists of n intersections numbered from 0 to n - 1 with bi-directional roads between some intersections. The inputs are generated such that you can reach any intersection from any other intersection and that there is at most one road between any two intersections.
+
+You are given an integer n and a 2D integer array roads where roads[i] = [ui, vi, timei] means that there is a road between intersections ui and vi that takes timei minutes to travel. You want to know in how many ways you can travel from intersection 0 to intersection n - 1 in the shortest amount of time.
+
+Return the number of ways you can arrive at your destination in the shortest amount of time. Since the answer may be large, return it modulo 109 + 7.
+
+Time Complexity :: O(E log V)
+Space Complexity :: O(N)
+
+Code ::
+class Solution {
+    const long long mod= 1e9+7;
+  public:
+    long long countPaths(int n, vector<vector<int >>& roads) {
+        vector<pair<long long,long long>>adj[n];
+        for(auto it:roads){
+            adj[it[0]].push_back({it[1] , it[2]});
+            adj[it[1]].push_back({it[0] , it[2]});
+        }
+        vector<long long>dist(n , LONG_MAX );
+        vector<long long>ways(n , 0);
+        priority_queue< pair<long long,long long> , vector<pair<long long,long long>> , greater<pair<long long,long long>>>q;
+        q.push({0,0});
+        ways[0] = 1;
+        dist[0] = 0;
+        while(!q.empty()){
+
+            long long node = q.top().second;
+            long long dis = q.top().first;
+            q.pop();
+            for(auto neigh : adj[node]){
+                long long adjnode = neigh.first;
+                long long d = neigh.second;
+                if(d + dis < dist[adjnode]){
+                    dist[adjnode] = d + dis;
+                    ways[adjnode] = ways[node];
+                    q.push({d+dis , adjnode});
+                }
+                else if(d+dis == dist[adjnode]){
+                    ways[adjnode] = (ways[adjnode] + ways[node])%mod;
+                }
+            }
+        }
+        return (ways[n-1])%mod;
+    }
+};
