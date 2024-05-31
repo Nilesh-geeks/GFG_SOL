@@ -1,0 +1,45 @@
+Problem :: City With the Smallest Number of Neighbors at a Threshold Distance
+There are n cities labeled from 0 to n-1 with m edges connecting them. Given the array edges where edges[i] = [fromi , toi ,weighti]  represents a bidirectional and weighted edge between cities fromi and toi, and given the integer distanceThreshold. You need to find out a city with the smallest number of cities that are reachable through some path and whose distance is at most Threshold Distance. If there are multiple such cities, our answer will be the city with the greatest label.
+
+Note: The distance of a path connecting cities i and j is equal to the sum of the edge's weights along that path.
+Time Compmlexity :: O(n^3)
+Space Complexity :: O(n^2)
+
+
+Code :: 
+class Solution {
+  public:
+    int findCity(int n, int m, vector<vector<int>>& edges, int distanceThreshold) {
+
+        vector<vector<int>>cost(n , vector<int>(n , 1e9+7));
+        for(auto it:edges){
+            cost[it[0]][it[1]] = it[2];
+            cost[it[1]][it[0]] = it[2];
+        }
+        for(int  i= 0 ; i<n ; i++)cost[i][i] =0;
+        for(int k =0 ; k<n ; k++){
+            for(int i=0 ; i<n ; i++){
+                for(int j=0 ; j<n ; j++){
+                    if(cost[i][k]==INT_MAX or cost[k][j]==INT_MAX)continue;
+                    cost[i][j] = min(cost[i][j] , cost[k][j] + cost[i][k]);
+                }
+            }
+        }
+
+        int maxi = n;
+        int city = -1;
+        for(int i= 0; i<n ; i++){
+            int cnt =0;
+            for(int j=0 ; j< n ; j++){
+                if(cost[i][j] <= distanceThreshold){
+                    cnt++;
+                }
+            }
+            if(cnt <= maxi){
+                maxi =cnt;
+                city = i;
+            }
+        }
+        return city;
+    }
+};
